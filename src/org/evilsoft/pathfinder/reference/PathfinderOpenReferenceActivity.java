@@ -117,12 +117,12 @@ public class PathfinderOpenReferenceActivity extends FragmentActivity implements
 			    CharacterAdapter ca = new CharacterAdapter(userDbAdapter);
 			    ArrayList<HashMap<String, Object>> charList = ca.createCharacterList();
 
-			    HashMap<String, Object> adder = new HashMap<String, Object>();
-		        adder.put("id", 0);
-		        adder.put("specificName", getString(R.string.add_character));
-		        charList.add(adder);
+                HashMap<String, Object> adder = new HashMap<String, Object>();
+                adder.put("id", 0);
+                adder.put("specificName", getString(R.string.add_character));
+                charList.add(adder);
 
-		        result.add(charList);
+                result.add(charList);
 			} else {
 			    
 			}

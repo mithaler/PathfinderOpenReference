@@ -21,6 +21,8 @@ import org.evilsoft.pathfinder.reference.list.RuleListAdapter;
 import org.evilsoft.pathfinder.reference.list.SkillListAdapter;
 import org.evilsoft.pathfinder.reference.list.SpellListAdapter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -33,6 +35,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class SectionViewFragment extends ListFragment implements OnItemClickListener {
 	private static final String TAG = "SectionViewFragment";
@@ -108,6 +112,8 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 		        Cursor curs = ca.fetchCharacterList(parts[3]);
 		        currentListAdapter = new CharacterListAdapter(getActivity().getApplicationContext(), curs, parts[3]);
 		    } else {
+		        showNewCharacterDialog();
+
 		        ArrayList<String> list = new ArrayList<String>();
 		        // Should do nothing when all is said and done
                 for (int i = 0; i < parts.length; i++) {
@@ -126,7 +132,36 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 		setListAdapter(currentListAdapter);
 	}
 
-	@Override
+	private void showNewCharacterDialog() {
+	    final EditText edit = new EditText(getActivity());
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(R.string.character_entry_title)
+             .setMessage(R.string.character_entry_text)
+             .setView(edit)
+             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    PsrdUserDbAdapter db = new PsrdUserDbAdapter(getActivity());
+
+                    try {
+                        db.open();
+                        if (db.addCharacter(edit.getText().toString())) {
+                            Toast.makeText(getActivity(), R.string.character_entry_success, Toast.LENGTH_SHORT);
+                        } else {
+                            Toast.makeText(getActivity(), R.string.character_entry_failure, Toast.LENGTH_SHORT);
+                        }
+                    } finally {
+                        db.close();
+                    }
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            })
+            .show();
+    }
+	
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setListAdapter(ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.top_titles,

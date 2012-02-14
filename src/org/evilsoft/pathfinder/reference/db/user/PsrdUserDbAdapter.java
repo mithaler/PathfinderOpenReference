@@ -26,6 +26,12 @@ public class PsrdUserDbAdapter {
 		database.close();
 	}
 
+	public boolean addCharacter(String name) {
+	    ContentValues cv = new ContentValues();
+	    cv.put("name", name);
+	    return database.insert("collections", null, cv) > -1;
+	}
+
 	public Integer getPsrdDbVersion() {
 		Integer ver = selectPsrdDbVersion();
 		if(ver == null) {
