@@ -2,6 +2,7 @@ package org.evilsoft.pathfinder.reference;
 
 import java.util.ArrayList;
 
+import org.evilsoft.pathfinder.reference.db.psrd.CharacterAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.ClassAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.FeatAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.MonsterAdapter;
@@ -10,6 +11,8 @@ import org.evilsoft.pathfinder.reference.db.psrd.RaceAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.RuleAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.SkillAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.SpellAdapter;
+import org.evilsoft.pathfinder.reference.db.user.PsrdUserDbAdapter;
+import org.evilsoft.pathfinder.reference.list.CharacterListAdapter;
 import org.evilsoft.pathfinder.reference.list.ClassListAdapter;
 import org.evilsoft.pathfinder.reference.list.FeatListAdapter;
 import org.evilsoft.pathfinder.reference.list.MonsterListAdapter;
@@ -98,6 +101,20 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 				}
 				currentListAdapter = new MonsterListAdapter(getActivity().getApplicationContext(), curs, true);
 			}
+		} else if (parts[2].equals("Characters")) {
+		    if (!parts[3].equals("0")) {
+		        // We have a character id and can search on it
+		        CharacterAdapter ca = new CharacterAdapter(new PsrdUserDbAdapter(getActivity().getApplicationContext()));
+		        Cursor curs = ca.fetchCharacterList(parts[3]);
+		        currentListAdapter = new CharacterListAdapter(getActivity().getApplicationContext(), curs, parts[3]);
+		    } else {
+		        ArrayList<String> list = new ArrayList<String>();
+		        // Should do nothing when all is said and done
+                for (int i = 0; i < parts.length; i++) {
+                    list.add(parts[i]);
+                }
+                currentListAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.list_item, list);
+		    }
 		} else {
 			ArrayList<String> list = new ArrayList<String>();
 			for (int i = 0; i < 6; i++) {

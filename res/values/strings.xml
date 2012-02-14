@@ -5,6 +5,7 @@
     <string name="search_hint">Search for article name</string>
     <string name="menu_search">Search</string>
     <string name="menu_ogl">OGL</string>
+    <string name="add_character">Add new character…</string>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="light_grey">#CCCCCC</color>
