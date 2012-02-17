@@ -42,9 +42,9 @@ public class PathfinderOpenReferenceActivity extends FragmentActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		userDbAdapter = new PsrdUserDbAdapter(this.getApplicationContext());
+		userDbAdapter = new PsrdUserDbAdapter(getApplicationContext());
 		userDbAdapter.open();
-		PsrdDbHelper dbh = new PsrdDbHelper(this.getApplicationContext());
+		PsrdDbHelper dbh = new PsrdDbHelper(getApplicationContext());
 		try {
 			dbh.createDataBase(userDbAdapter);
 		} catch (IOException e) {

@@ -30,6 +30,8 @@ public class DetailsActivity extends FragmentActivity {
 		Intent launchingIntent = getIntent();
 		DetailsViewFragment viewer = (DetailsViewFragment) getSupportFragmentManager().findFragmentById(
 				R.id.details_view_fragment);
+		viewer.setCharacter(launchingIntent.getStringExtra("character"));
+		viewer.updateUrl(newUri);
 		DetailsListFragment list = (DetailsListFragment) getSupportFragmentManager().findFragmentById(
 				R.id.details_list_fragment);
 		String newUri;

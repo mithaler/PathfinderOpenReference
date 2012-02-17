@@ -41,6 +41,7 @@ import android.widget.Toast;
 public class SectionViewFragment extends ListFragment implements OnItemClickListener {
 	private static final String TAG = "SectionViewFragment";
 	private PsrdDbAdapter dbAdapter;
+	private PsrdUserDbAdapter userDbAdapter;
 	private String currentUrl;
 	private BaseAdapter currentListAdapter;
 
@@ -106,20 +107,16 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 				currentListAdapter = new MonsterListAdapter(getActivity().getApplicationContext(), curs, true);
 			}
 		} else if (parts[2].equals("Characters")) {
-		    if (!parts[3].equals("0")) {
-		        // We have a character id and can search on it
-		        CharacterAdapter ca = new CharacterAdapter(new PsrdUserDbAdapter(getActivity().getApplicationContext()));
-		        Cursor curs = ca.fetchCharacterList(parts[3]);
-		        currentListAdapter = new CharacterListAdapter(getActivity().getApplicationContext(), curs, parts[3]);
-		    } else {
-		        showNewCharacterDialog();
-
-		        ArrayList<String> list = new ArrayList<String>();
-		        // Should do nothing when all is said and done
-                for (int i = 0; i < parts.length; i++) {
-                    list.add(parts[i]);
-                }
-                currentListAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.list_item, list);
+		    if (parts.length > 4) {
+		        // I believe it's safe to test against the name because the keyboard doesn't allow typing an ellipsis character
+		        if (parts[parts.length - 1].equals(getString(R.string.add_character))) {
+		            showNewCharacterDialog();
+		        } else {
+    		        // We have a character name and can search on it
+    		        CharacterAdapter ca = new CharacterAdapter(userDbAdapter);
+    		        Cursor curs = ca.fetchCharacterList(parts[parts.length - 1]);
+    		        currentListAdapter = new CharacterListAdapter(getActivity(), curs, parts[3]);
+		        }
 		    }
 		} else {
 			ArrayList<String> list = new ArrayList<String>();
@@ -133,9 +130,14 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 	}
 
 	private void showNewCharacterDialog() {
-	    final EditText edit = new EditText(getActivity());
+	    AlertDialog.Builder alert =
+	        Integer.parseInt(android.os.Build.VERSION.SDK) < 11 ?
+	            new AlertDialog.Builder(getActivity()) :
+	            new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        final EditText edit = new EditText(alert.getContext());
+	    edit.setSingleLine(true);
+
         alert.setTitle(R.string.character_entry_title)
              .setMessage(R.string.character_entry_text)
              .setView(edit)
@@ -146,9 +148,10 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
                     try {
                         db.open();
                         if (db.addCharacter(edit.getText().toString())) {
-                            Toast.makeText(getActivity(), R.string.character_entry_success, Toast.LENGTH_SHORT);
+                            Toast.makeText(getActivity(), R.string.character_entry_success, Toast.LENGTH_SHORT).show();
+                            // TODO: Figure out a way to make this refresh the list!
                         } else {
-                            Toast.makeText(getActivity(), R.string.character_entry_failure, Toast.LENGTH_SHORT);
+                            Toast.makeText(getActivity(), R.string.character_entry_failure, Toast.LENGTH_SHORT).show();
                         }
                     } finally {
                         db.close();
@@ -160,7 +163,7 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
             })
             .show();
     }
-	
+
     @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -168,6 +171,9 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 				R.layout.list_item));
 		dbAdapter = new PsrdDbAdapter(getActivity().getApplicationContext());
 		dbAdapter.open();
+		
+		userDbAdapter = new PsrdUserDbAdapter(getActivity());
+		userDbAdapter.open();
 	}
 
 	@Override
@@ -175,6 +181,9 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 		super.onDestroy();
 		if (dbAdapter != null) {
 			dbAdapter.close();
+		}
+		if (userDbAdapter != null) {
+		    userDbAdapter.close();
 		}
 	}
 
@@ -184,6 +193,8 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 		Log.e(TAG, uri);
 		Intent showContent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
 		showContent.setData(Uri.parse(uri));
+		// TODO: figure out how this works
+		// showContent.putExtra("character", currentCharacter); 
 		startActivity(showContent);
 	}
 }

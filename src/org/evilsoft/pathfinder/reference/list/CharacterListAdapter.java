@@ -7,16 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class CharacterListAdapter extends DisplayListAdapter {
-    
 
-    public CharacterListAdapter(Context context, Cursor c, String collection_id) {
+    public CharacterListAdapter(Context context, Cursor c, String character_id) {
         super(context, c);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
-        return null;
+        return convertView;
     }
 
     @Override

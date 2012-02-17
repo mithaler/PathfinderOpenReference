@@ -26,6 +26,7 @@ public class DetailsWebViewClient extends WebViewClient {
 	private ImageButton back;
 	private String url;
 	private String oldUrl;
+	private String currentCharacter;
 	ArrayList<HashMap<String, String>> path;
 
 	public DetailsWebViewClient(Activity act, TextView title, ImageButton back, ImageButton star) {
@@ -137,4 +138,9 @@ public class DetailsWebViewClient extends WebViewClient {
 			dbAdapter.close();
 		}
 	}
+
+    public void setCharacter(String character) {
+        currentCharacter = character;
+        // TODO: update what user sees
+    }
 }
