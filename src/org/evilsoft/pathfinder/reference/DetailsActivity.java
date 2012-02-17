@@ -1,6 +1,8 @@
 package org.evilsoft.pathfinder.reference;
 
+import org.evilsoft.pathfinder.reference.db.psrd.CharacterAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.PsrdDbAdapter;
+import org.evilsoft.pathfinder.reference.db.user.PsrdUserDbAdapter;
 
 import android.app.ActionBar;
 import android.app.SearchManager;
@@ -13,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
+import android.widget.SimpleCursorAdapter;
 
 public class DetailsActivity extends FragmentActivity {
 	private PsrdDbAdapter dbAdapter;
@@ -25,13 +28,28 @@ public class DetailsActivity extends FragmentActivity {
 
 		ActionBar action = this.getActionBar();
 		action.setDisplayHomeAsUpEnabled(true);
+		action.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		CharacterAdapter ca = new CharacterAdapter(new PsrdUserDbAdapter(this));
+		SimpleCursorAdapter sca = new SimpleCursorAdapter(
+		    this,
+		    android.R.layout.simple_spinner_dropdown_item,
+		    ca.fetchCharacterList(),
+		    new String[] {"name"},
+		    new int[] {android.R.id.text1},
+		    0
+		);
+		action.setListNavigationCallbacks(sca, new ActionBar.OnNavigationListener() {
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        });
+
 		setContentView(R.layout.details);
 
 		Intent launchingIntent = getIntent();
 		DetailsViewFragment viewer = (DetailsViewFragment) getSupportFragmentManager().findFragmentById(
 				R.id.details_view_fragment);
-		viewer.setCharacter(launchingIntent.getStringExtra("character"));
-		viewer.updateUrl(newUri);
 		DetailsListFragment list = (DetailsListFragment) getSupportFragmentManager().findFragmentById(
 				R.id.details_list_fragment);
 		String newUri;

@@ -114,7 +114,7 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 		        } else {
     		        // We have a character name and can search on it
     		        CharacterAdapter ca = new CharacterAdapter(userDbAdapter);
-    		        Cursor curs = ca.fetchCharacterList(parts[parts.length - 1]);
+    		        Cursor curs = ca.fetchCharacterEntries(parts[parts.length - 1]);
     		        currentListAdapter = new CharacterListAdapter(getActivity(), curs, parts[3]);
 		        }
 		    }

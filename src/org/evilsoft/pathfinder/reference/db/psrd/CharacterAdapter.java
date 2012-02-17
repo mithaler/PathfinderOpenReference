@@ -12,9 +12,15 @@ public class CharacterAdapter {
     public CharacterAdapter(PsrdUserDbAdapter userDbAdapter) {
         this.userDbAdapter = userDbAdapter;
     }
+    
+    public void closeDb() {
+        if (userDbAdapter != null) {
+            userDbAdapter.close();
+        }
+    }
 
-    private Cursor fetchCharacterList() {
-        String sql = "SELECT * FROM collections";
+    public Cursor fetchCharacterList() {
+        String sql = "SELECT collection_id AS _id, name FROM collections";
         userDbAdapter.open();
         return userDbAdapter.database.rawQuery(sql, new String[]{});
     }
@@ -38,7 +44,7 @@ public class CharacterAdapter {
         return charList;
     }
 
-    public Cursor fetchCharacterList(String character_id) {
+    public Cursor fetchCharacterEntries(String character_id) {
         String sql = "SELECT * FROM collection_entries WHERE collection_id = ?";
         // assume that DB is open because it's coming from SectionViewFragment
         return userDbAdapter.database.rawQuery(sql, new String[] {character_id});
