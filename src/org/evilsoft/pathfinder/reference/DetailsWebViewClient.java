@@ -3,6 +3,7 @@ package org.evilsoft.pathfinder.reference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.evilsoft.pathfinder.reference.db.psrd.CharacterAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.PsrdDbAdapter;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ public class DetailsWebViewClient extends WebViewClient {
 	private ImageButton back;
 	private String url;
 	private String oldUrl;
-	private String currentCharacter;
+	private long currentCharacter;
 	ArrayList<HashMap<String, String>> path;
 
 	public DetailsWebViewClient(Activity act, TextView title, ImageButton back, ImageButton star) {
@@ -129,18 +130,33 @@ public class DetailsWebViewClient extends WebViewClient {
 			view.scrollTo(0, 0);
 		}
 
+		refreshStarButtonState();
+		star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: star or unstar the entry
+                refreshStarButtonState();
+            }
+		});
+
 		this.oldUrl = newUrl;
 		return true;
 	}
 
-	public void onDestroy() {
+	private void refreshStarButtonState() {
+        boolean starred = CharacterAdapter.entryIsStarred(act, currentCharacter, url);
+        star.setPressed(starred);
+        star.setImageResource(starred ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
+    }
+
+    public void onDestroy() {
 		if (dbAdapter != null) {
 			dbAdapter.close();
 		}
 	}
 
-    public void setCharacter(String character) {
-        currentCharacter = character;
-        // TODO: update what user sees
+    public void setCharacter(long itemId) {
+        currentCharacter = itemId;
+        refreshStarButtonState();
     }
 }

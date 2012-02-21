@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,30 +27,11 @@ public class DetailsActivity extends FragmentActivity {
 		dbAdapter = new PsrdDbAdapter(this);
 		dbAdapter.open();
 
-		ActionBar action = this.getActionBar();
-		action.setDisplayHomeAsUpEnabled(true);
-		action.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		CharacterAdapter ca = new CharacterAdapter(new PsrdUserDbAdapter(this));
-		SimpleCursorAdapter sca = new SimpleCursorAdapter(
-		    this,
-		    android.R.layout.simple_spinner_dropdown_item,
-		    ca.fetchCharacterList(),
-		    new String[] {"name"},
-		    new int[] {android.R.id.text1},
-		    0
-		);
-		action.setListNavigationCallbacks(sca, new ActionBar.OnNavigationListener() {
-            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        });
-
 		setContentView(R.layout.details);
 
 		Intent launchingIntent = getIntent();
-		DetailsViewFragment viewer = (DetailsViewFragment) getSupportFragmentManager().findFragmentById(
-				R.id.details_view_fragment);
+		final DetailsViewFragment viewer = (DetailsViewFragment) getSupportFragmentManager()
+		        .findFragmentById(R.id.details_view_fragment);
 		DetailsListFragment list = (DetailsListFragment) getSupportFragmentManager().findFragmentById(
 				R.id.details_list_fragment);
 		String newUri;
@@ -69,6 +51,26 @@ public class DetailsActivity extends FragmentActivity {
 		viewer.updateUrl(newUri);
 		String uri = buildDetailsListUri(newUri);
 		list.updateUrl(uri);
+		
+		// Set up action bar
+		ActionBar action = this.getActionBar();
+        action.setDisplayHomeAsUpEnabled(true);
+        action.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        CharacterAdapter ca = new CharacterAdapter(new PsrdUserDbAdapter(this));
+        SimpleCursorAdapter sca = new SimpleCursorAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            ca.fetchCharacterList(),
+            new String[] {"name"},
+            new int[] {android.R.id.text1},
+            0
+        );
+        action.setListNavigationCallbacks(sca, new ActionBar.OnNavigationListener() {
+            public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+                viewer.setCharacter(itemId);
+                return true;
+            }
+        });
 	}
 
 	@Override
