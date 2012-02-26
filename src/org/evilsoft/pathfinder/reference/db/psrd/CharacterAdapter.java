@@ -46,7 +46,7 @@ public class CharacterAdapter {
     }
 
     public Cursor fetchCharacterEntries(String character_id) {
-        String sql = "SELECT * FROM collection_entries WHERE collection_id = ?";
+        String sql = "SELECT collection_entries.* FROM collection_entries INNER JOIN collections ON collections.collection_id = collection_entries.collection_id WHERE collections.name = ?";
         // assume that DB is open because it's coming from SectionViewFragment
         return userDbAdapter.database.rawQuery(sql, new String[] {character_id});
     }
