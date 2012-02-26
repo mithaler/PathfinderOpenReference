@@ -50,28 +50,56 @@ public class CharacterAdapter {
         // assume that DB is open because it's coming from SectionViewFragment
         return userDbAdapter.database.rawQuery(sql, new String[] {character_id});
     }
-    
-    public static boolean entryIsStarred(Context context, long character_id, String path) {
+
+    public static void toggleEntryStar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
+        if (CharacterAdapter.entryIsStarred(context, characterId, path)) {
+            CharacterAdapter.unstar(context, characterId, path, url);
+        } else {
+            CharacterAdapter.star(context, characterId, path, url);
+        }
+    }
+
+    public static boolean entryIsStarred(Context context, long characterId, ArrayList<HashMap<String, String>> path) {
         PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
-        boolean result;
 
         try {
             userDbAdapter.open();
 
-            // TODO: figure out what the query would look like
             StringBuffer sql = new StringBuffer();
-            sql.append("SELECT * FROM collection_entries");
+            sql.append("SELECT 1 FROM collection_entries");
             sql.append(" WHERE collection_id = ?");
-            sql.append("   AND path = ?");
+            sql.append("   AND section_id = ?");
+            sql.append("   AND name = ?");
 
-            Cursor curs = userDbAdapter.database.rawQuery(sql.toString(), new String[] {String.valueOf(character_id), path});
-            result = curs.moveToFirst();
+            Cursor curs = userDbAdapter.database.rawQuery(sql.toString(),
+                new String[] {Long.toString(characterId), path.get(0).get("id"), path.get(1).get("name")});
+
+            return curs.moveToFirst();
         } finally {
             userDbAdapter.close();
         }
+    }
 
-        // return result;
-        return character_id == 1 ? true : false;
+    private static void star(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
+        PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
+
+        try {
+            userDbAdapter.open();
+            userDbAdapter.star(characterId, path.get(0).get("id"), path.get(1).get("name"), url);
+        } finally {
+            userDbAdapter.close();
+        }
+    }
+
+    private static void unstar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
+        PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
+
+        try {
+            userDbAdapter.open();
+            userDbAdapter.unstar(characterId, path.get(0).get("id"), path.get(1).get("name"), url);
+        } finally {
+            userDbAdapter.close();
+        }
     }
 
 }

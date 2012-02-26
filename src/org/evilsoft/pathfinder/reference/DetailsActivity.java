@@ -60,7 +60,7 @@ public class DetailsActivity extends FragmentActivity {
         SimpleCursorAdapter sca = new SimpleCursorAdapter(
             this,
             android.R.layout.simple_spinner_dropdown_item,
-            ca.fetchCharacterList(),
+            ca.fetchCharacterList(), // TODO: feed into array and use that instead, or set up a proper managed query!
             new String[] {"name"},
             new int[] {android.R.id.text1},
             0
@@ -71,6 +71,8 @@ public class DetailsActivity extends FragmentActivity {
                 return true;
             }
         });
+        
+        ca.closeDb();
 	}
 
 	@Override

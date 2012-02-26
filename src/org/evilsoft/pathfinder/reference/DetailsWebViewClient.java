@@ -85,13 +85,13 @@ public class DetailsWebViewClient extends WebViewClient {
 	public void reloadList(String newUrl) {
 		// [{id=10751, name=Ability Scores}, {id=10701, name=Getting Started},
 		// {id=10700, name=Rules: Core Rulebook}, {id=1, name=PFSRD}]
-		Log.e(TAG, newUrl);
+		Log.e("url", newUrl);
 		String[] parts = newUrl.split("\\/");
 		if (parts[2].startsWith("Rules")) {
 			DetailsListFragment list = (DetailsListFragment) act.getSupportFragmentManager().findFragmentById(
 					R.id.details_list_fragment);
 			HashMap<String, String> parent = path.get(1);
-			String updateUrl = SectionRenderer.swapUrl(this.url, parent.get("name"), parent.get("id"));
+			String updateUrl = SectionRenderer.swapUrl(this.url, parent.get("name"), parent.get("id")); // TODO: there is a bug here! check logcat and look at the URLs
 			list.updateUrl(updateUrl);
 		}
 	}
@@ -134,7 +134,7 @@ public class DetailsWebViewClient extends WebViewClient {
 		star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: star or unstar the entry
+                CharacterAdapter.toggleEntryStar(act, currentCharacter, path, url);
                 refreshStarButtonState();
             }
 		});
@@ -144,7 +144,7 @@ public class DetailsWebViewClient extends WebViewClient {
 	}
 
 	private void refreshStarButtonState() {
-        boolean starred = CharacterAdapter.entryIsStarred(act, currentCharacter, url);
+        boolean starred = CharacterAdapter.entryIsStarred(act, currentCharacter, path);
         star.setPressed(starred);
         star.setImageResource(starred ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
     }
