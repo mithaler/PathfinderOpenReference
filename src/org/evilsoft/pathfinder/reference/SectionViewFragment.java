@@ -13,6 +13,7 @@ import org.evilsoft.pathfinder.reference.db.psrd.SkillAdapter;
 import org.evilsoft.pathfinder.reference.db.psrd.SpellAdapter;
 import org.evilsoft.pathfinder.reference.db.user.PsrdUserDbAdapter;
 import org.evilsoft.pathfinder.reference.list.CharacterListAdapter;
+import org.evilsoft.pathfinder.reference.list.CharacterListItem;
 import org.evilsoft.pathfinder.reference.list.ClassListAdapter;
 import org.evilsoft.pathfinder.reference.list.FeatListAdapter;
 import org.evilsoft.pathfinder.reference.list.MonsterListAdapter;
@@ -189,12 +190,18 @@ public class SectionViewFragment extends ListFragment implements OnItemClickList
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		String uri = currentUrl + "/" + currentListAdapter.getItemId(position);
+	    Intent showContent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
+
+	    String uri = currentUrl + "/" + currentListAdapter.getItemId(position);
+		DisplayListAdapter a = (DisplayListAdapter) parent.getAdapter();
+		if (a.getClass().equals(CharacterListAdapter.class)) {
+		    CharacterListItem item = (CharacterListItem) a.getItem(position);
+		    uri = item.getUrl();
+		    showContent.putExtra("currentCharacter", item.getCharacterId());
+		}
+
 		Log.e(TAG, uri);
-		Intent showContent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
 		showContent.setData(Uri.parse(uri));
-		// TODO: figure out how this works
-		// showContent.putExtra("character", currentCharacter); 
 		startActivity(showContent);
 	}
 }

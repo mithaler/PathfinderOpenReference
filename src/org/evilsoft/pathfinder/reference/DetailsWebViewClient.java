@@ -134,7 +134,7 @@ public class DetailsWebViewClient extends WebViewClient {
 		star.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CharacterAdapter.toggleEntryStar(act, currentCharacter, path, url);
+                CharacterAdapter.toggleEntryStar(act, currentCharacter, path, title.getText().toString(), url);
                 refreshStarButtonState();
             }
 		});
@@ -144,7 +144,7 @@ public class DetailsWebViewClient extends WebViewClient {
 	}
 
 	private void refreshStarButtonState() {
-        boolean starred = CharacterAdapter.entryIsStarred(act, currentCharacter, path);
+        boolean starred = CharacterAdapter.entryIsStarred(act, currentCharacter, path, title.getText().toString());
         star.setPressed(starred);
         star.setImageResource(starred ? android.R.drawable.btn_star_big_on : android.R.drawable.btn_star_big_off);
     }

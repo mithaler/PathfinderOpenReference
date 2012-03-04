@@ -45,21 +45,25 @@ public class CharacterAdapter {
         return charList;
     }
 
-    public Cursor fetchCharacterEntries(String character_id) {
-        String sql = "SELECT collection_entries.* FROM collection_entries INNER JOIN collections ON collections.collection_id = collection_entries.collection_id WHERE collections.name = ?";
+    public Cursor fetchCharacterEntries(String characterId) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("SELECT collection_entries.*");
+        sql.append(" FROM collection_entries");
+        sql.append("  INNER JOIN collections ON collections.collection_id = collection_entries.collection_id");
+        sql.append(" WHERE collections.name = ?");
         // assume that DB is open because it's coming from SectionViewFragment
-        return userDbAdapter.database.rawQuery(sql, new String[] {character_id});
+        return userDbAdapter.database.rawQuery(sql.toString(), new String[] {characterId});
     }
 
-    public static void toggleEntryStar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
-        if (CharacterAdapter.entryIsStarred(context, characterId, path)) {
-            CharacterAdapter.unstar(context, characterId, path, url);
+    public static void toggleEntryStar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String title, String url) {
+        if (CharacterAdapter.entryIsStarred(context, characterId, path, title)) {
+            CharacterAdapter.unstar(context, characterId, path, title, url);
         } else {
-            CharacterAdapter.star(context, characterId, path, url);
+            CharacterAdapter.star(context, characterId, path, title, url);
         }
     }
 
-    public static boolean entryIsStarred(Context context, long characterId, ArrayList<HashMap<String, String>> path) {
+    public static boolean entryIsStarred(Context context, long characterId, ArrayList<HashMap<String, String>> path, String title) {
         PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
 
         try {
@@ -72,7 +76,7 @@ public class CharacterAdapter {
             sql.append("   AND name = ?");
 
             Cursor curs = userDbAdapter.database.rawQuery(sql.toString(),
-                new String[] {Long.toString(characterId), path.get(0).get("id"), path.get(1).get("name")});
+                new String[] {Long.toString(characterId), path.get(0).get("id"), title});
 
             return curs.moveToFirst();
         } finally {
@@ -80,23 +84,23 @@ public class CharacterAdapter {
         }
     }
 
-    private static void star(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
+    private static void star(Context context, long characterId, ArrayList<HashMap<String, String>> path, String title, String url) {
         PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
 
         try {
             userDbAdapter.open();
-            userDbAdapter.star(characterId, path.get(0).get("id"), path.get(1).get("name"), url);
+            userDbAdapter.star(characterId, path.get(0).get("id"), title, url);
         } finally {
             userDbAdapter.close();
         }
     }
 
-    private static void unstar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String url) {
+    private static void unstar(Context context, long characterId, ArrayList<HashMap<String, String>> path, String title, String url) {
         PsrdUserDbAdapter userDbAdapter = new PsrdUserDbAdapter(context);
 
         try {
             userDbAdapter.open();
-            userDbAdapter.unstar(characterId, path.get(0).get("id"), path.get(1).get("name"), url);
+            userDbAdapter.unstar(characterId, path.get(0).get("id"), title, url);
         } finally {
             userDbAdapter.close();
         }

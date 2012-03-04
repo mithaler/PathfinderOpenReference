@@ -51,7 +51,7 @@ public class DetailsActivity extends FragmentActivity {
 		viewer.updateUrl(newUri);
 		String uri = buildDetailsListUri(newUri);
 		list.updateUrl(uri);
-		
+
 		// Set up action bar
 		ActionBar action = this.getActionBar();
         action.setDisplayHomeAsUpEnabled(true);
@@ -71,8 +71,13 @@ public class DetailsActivity extends FragmentActivity {
                 return true;
             }
         });
-        
+
         ca.closeDb();
+
+        String characterId = launchingIntent.getStringExtra("currentCharacter");
+        if (characterId != null) {
+            action.setSelectedNavigationItem(Integer.parseInt(characterId) - 1);
+        }
 	}
 
 	@Override

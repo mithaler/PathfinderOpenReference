@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class CharacterListAdapter extends DisplayListAdapter {
 
-    public CharacterListAdapter(Context context, Cursor c, String character_id) {
+    public CharacterListAdapter(Context context, Cursor c, String characterId) {
         super(context, c);
     }
 
@@ -34,7 +34,9 @@ public class CharacterListAdapter extends DisplayListAdapter {
     @Override
     public Object buildItem(Cursor c) {
         CharacterListItem cla = new CharacterListItem();
+        cla.setCharacterId(c.getString(1));
         cla.setName(c.getString(3));
+        cla.setUrl(c.getString(4));
         return cla;
     }
 
